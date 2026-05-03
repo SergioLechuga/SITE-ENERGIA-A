@@ -1,0 +1,17 @@
+{
+  "name": "energia-a-landing",
+  "version": "1.0.0",
+  "description": "Landing page institucional ENERGIA A — Energia Solar por Assinatura",
+  "main": "api/leads.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "googleapis": "^140.0.0",
+    "nodemailer": "^6.9.0"
+  },
+  "engines": {
+    "node": ">=18.x"
+  }
+}

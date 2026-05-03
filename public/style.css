@@ -1,0 +1,81 @@
+/* ═══════════════════════════════════════════════════════════
+   ENERGIA A — style.css  (Tailwind supplement)
+   Apenas o que o Tailwind não cobre nativamente.
+   ═══════════════════════════════════════════════════════════ */
+
+/* Offset para header fixo ao usar âncoras */
+[id] { scroll-margin-top: 76px; }
+
+/* ── FAQ ACCORDION ──────────────────────────────────────── */
+.faq-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.faq-body.open { max-height: 400px; }
+
+.faq-chevron { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.faq-open .faq-chevron { transform: rotate(180deg); }
+
+/* ── MODAL ──────────────────────────────────────────────── */
+#confirmModal {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0.3s ease, opacity 0.3s ease;
+}
+#confirmModal.modal-visible {
+  visibility: visible;
+  opacity: 1;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+.modal-box { animation: slideUp 0.32s cubic-bezier(0.34, 1.4, 0.64, 1); }
+
+/* ── PROGRESS BAR ───────────────────────────────────────── */
+.progress-fill {
+  width: 0%;
+  transition: width 2.8s linear;
+}
+.progress-fill.running { width: 100%; }
+
+/* ── SCROLL FADE-UP ─────────────────────────────────────── */
+.fade-up {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.fade-up.in-view { opacity: 1; transform: translateY(0); }
+
+/* ── WHATSAPP FLOAT PULSE ───────────────────────────────── */
+@keyframes wa-ring {
+  0%, 100% { box-shadow: 0 0 0 0   rgba(37, 211, 102, .55); }
+  60%       { box-shadow: 0 0 0 14px rgba(37, 211, 102, 0);  }
+}
+.wa-float { animation: wa-ring 2.8s ease infinite; }
+
+/* ── GRADIENTE PAINEL SIMULADOR ─────────────────────────── */
+.sim-results-bg {
+  background: linear-gradient(145deg, #0f2d37 0%, #1a4a5c 100%);
+}
+
+/* ── HERO CARD STRIPE ───────────────────────────────────── */
+.hero-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: #e27f1b;
+  border-radius: 16px 16px 0 0;
+}
+
+/* ── HAMBURGER MENU ANIMATION ───────────────────────────── */
+.menu-open .bar-1 { transform: translateY(7px) rotate(45deg); }
+.menu-open .bar-2 { opacity: 0; transform: scaleX(0); }
+.menu-open .bar-3 { transform: translateY(-7px) rotate(-45deg); }
+
+.bar-1, .bar-2, .bar-3 {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
