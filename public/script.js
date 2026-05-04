@@ -187,6 +187,22 @@ async function submitLead(event) {
     console.warn('API indisponível — redirecionando mesmo assim:', err.message);
   }
 
+  // Webhook n8n - Envia os dados do formulário
+  try {
+    await fetch('https://n8n.energiaa.com.br/webhook/7a0364cb-155e-4415-83ef-f9903183a7c4', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        tipo: 'formulario_lead',
+        nome: name,
+        whatsapp: whatsapp,
+        consumo: consumption || null
+      }),
+    });
+  } catch (err) {
+    console.error('Erro ao enviar webhook n8n:', err);
+  }
+
   showModal(name, whatsapp);
 }
 
@@ -355,6 +371,30 @@ function initAnimations() {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
+   TRACKING DE CLIQUES WHATSAPP
+   ═══════════════════════════════════════════════════════════════════ */
+
+function initWhatsAppTracking() {
+  document.querySelectorAll('a[href^="https://wa.me"]').forEach(link => {
+    link.addEventListener('click', () => {
+      try {
+        fetch('https://n8n.energiaa.com.br/webhook/7a0364cb-155e-4415-83ef-f9903183a7c4', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tipo: 'aviso_clique_link',
+            mensagem: 'Alguém clicou em um link direto de redirecionamento para o WhatsApp',
+            url: link.href
+          })
+        });
+      } catch (err) {
+        console.error('Erro ao enviar webhook de aviso:', err);
+      }
+    });
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════════
    INICIALIZAÇÃO
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -362,4 +402,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initHeader();
   initSmoothScroll();
   initAnimations();
+  initWhatsAppTracking();
 });
