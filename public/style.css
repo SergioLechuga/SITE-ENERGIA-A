@@ -61,16 +61,6 @@
   background: linear-gradient(145deg, #0f2d37 0%, #1a4a5c 100%);
 }
 
-/* ── HERO CARD STRIPE ───────────────────────────────────── */
-.hero-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 4px;
-  background: #e27f1b;
-  border-radius: 16px 16px 0 0;
-}
-
 /* ── HAMBURGER MENU ANIMATION ───────────────────────────── */
 .menu-open .bar-1 { transform: translateY(7px) rotate(45deg); }
 .menu-open .bar-2 { opacity: 0; transform: scaleX(0); }

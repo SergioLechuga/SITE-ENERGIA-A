@@ -1,7 +1,7 @@
 /**
  * script.js — ENERGIA A Landing Page
  * Compatível com Tailwind CSS
- * Funcionalidades: Simulador · FAQ · Formulário · Modal · Header · Animações
+ * Funcionalidades: Hero Simulator · Simulador · FAQ · Formulário · Modal · Header · Animações
  */
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -114,6 +114,87 @@ function resetSimulator() {
  */
 function formatBRL(value) {
   return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   HERO SIMULATOR — simulador interativo embutido na seção HERO
+   Reutiliza TARIFA_KWH, DESCONTO e formatBRL do simulador principal.
+   IDs próprios: hero* — sem conflito com o simulador da seção.
+   ═══════════════════════════════════════════════════════════════════ */
+
+let heroSimMode = 'kwh';
+
+const HERO_ACTIVE   = ['bg-white', 'text-primary', 'shadow-sm'];
+const HERO_INACTIVE = ['text-gray-500', 'hover:text-gray-700'];
+
+/**
+ * Alterna modo do hero simulator (kWh ↔ R$)
+ */
+function setHeroSimMode(mode) {
+  heroSimMode = mode;
+
+  const btnKwh   = document.getElementById('heroBtnKwh');
+  const btnReais = document.getElementById('heroBtnReais');
+  const label    = document.getElementById('heroSimLabel');
+  const prefix   = document.getElementById('heroSimPrefix');
+  const hint     = document.getElementById('heroSimHint');
+  const input    = document.getElementById('heroSimInput');
+
+  if (mode === 'kwh') {
+    btnKwh.classList.add(...HERO_ACTIVE);
+    btnKwh.classList.remove(...HERO_INACTIVE);
+    btnReais.classList.remove(...HERO_ACTIVE);
+    btnReais.classList.add(...HERO_INACTIVE);
+    btnKwh.setAttribute('aria-selected', 'true');
+    btnReais.setAttribute('aria-selected', 'false');
+    label.textContent  = 'Consumo médio mensal (kWh)';
+    prefix.textContent = 'kWh';
+    hint.innerHTML     = '💡 Você encontra esse número na sua conta de luz, no campo <strong class="text-gray-500">"Consumo do Mês"</strong>.';
+  } else {
+    btnReais.classList.add(...HERO_ACTIVE);
+    btnReais.classList.remove(...HERO_INACTIVE);
+    btnKwh.classList.remove(...HERO_ACTIVE);
+    btnKwh.classList.add(...HERO_INACTIVE);
+    btnKwh.setAttribute('aria-selected', 'false');
+    btnReais.setAttribute('aria-selected', 'true');
+    label.textContent  = 'Valor médio da sua conta (R$)';
+    prefix.textContent = 'R$';
+    hint.innerHTML     = '💡 Use o valor total que você paga na conta de luz, sem descontos.';
+  }
+
+  input.value = '';
+  input.focus();
+  document.getElementById('heroSimResults').classList.add('hidden');
+}
+
+/**
+ * Calcula e exibe a economia estimada no hero
+ */
+function calcHeroSim() {
+  const raw     = parseFloat(document.getElementById('heroSimInput').value);
+  const results = document.getElementById('heroSimResults');
+
+  if (!raw || raw <= 0) {
+    results.classList.add('hidden');
+    return;
+  }
+
+  const valorConta     = heroSimMode === 'kwh' ? raw * TARIFA_KWH : raw;
+  const economiaMensal = valorConta * DESCONTO;
+  const economiaAnual  = economiaMensal * 12;
+  const contasEco      = economiaAnual / valorConta;
+
+  document.getElementById('heroMonthlyValue').textContent = formatBRL(economiaMensal);
+  document.getElementById('heroYearlyValue').textContent  = formatBRL(economiaAnual);
+  document.getElementById('heroBillsValue').textContent   = contasEco.toFixed(1).replace('.', ',') + 'x';
+
+  // Mostra painel de resultados com animação suave
+  results.classList.remove('hidden');
+  results.style.opacity = '0';
+  requestAnimationFrame(() => {
+    results.style.transition = 'opacity 0.3s ease';
+    results.style.opacity = '1';
+  });
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -403,4 +484,12 @@ document.addEventListener('DOMContentLoaded', () => {
   initSmoothScroll();
   initAnimations();
   initWhatsAppTracking();
+
+  // Auto-focus no hero simulator — apenas desktop (mobile: teclado não deve abrir sozinho)
+  setTimeout(() => {
+    const heroInput = document.getElementById('heroSimInput');
+    if (heroInput && window.innerWidth >= 1024) {
+      heroInput.focus();
+    }
+  }, 800);
 });
